@@ -9,16 +9,30 @@ class Window(QMainWindow):
         self.initUI()
 
     def initUI(self):
-        self.createMenu()
+        self.createMenus()
         self.examplaryUI()
 
-    def createMenu(self):
+    def createMenus(self):
         # Create a menu bar
         self.menu = self.menuBar()
         # Add a drop-down list of the name File
+        self.createFileMenu()
+        # Add a drop-down list of the name Options
+        self.createOptionsMenu()
+
+    def createFileMenu(self):
         self.fileMenu = self.menu.addMenu("File")
-        # Extend the file menu with exit position
         self.fileMenu.addAction('Exit', self.close)
+
+    def createOptionsMenu(self):
+        self.optionsMenu = self.menu.addMenu("Options")
+        self.save_layout = QAction('Save layout', self)
+        #self.save_layout.triggered.connect(None)
+        self.optionsMenu.addAction(self.save_layout)
+        self.set_layout = QAction('Set layout', self)
+        #self.set_layout.triggered.connect(None)
+        self.set_layout.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_H))
+        self.optionsMenu.addAction(self.set_layout)
 
     def examplaryUI(self):
         mainwindow = QWidget()

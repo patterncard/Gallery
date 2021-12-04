@@ -26,15 +26,49 @@ class Window(QMainWindow):
 
     def createOptionsMenu(self):
         self.optionsMenu = self.menu.addMenu("Options")
-        self.save_layout = QAction('Save layout', self)
-        #self.save_layout.triggered.connect(None)
-        self.optionsMenu.addAction(self.save_layout)
-        self.set_layout = QAction('Set layout', self)
-        #self.set_layout.triggered.connect(None)
-        self.set_layout.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_H))
-        self.optionsMenu.addAction(self.set_layout)
+        #adding save layout and set layout to potions menu
+        save_layout = QAction('Save layout', self)
+        save_layout.triggered.connect(self.layoutSave)
+        self.optionsMenu.addAction(save_layout)
+        set_layout = QAction('Set layout', self)
+        set_layout.triggered.connect(self.layoutSet)
+        #TODO, hopefully will make it so user can choose a letter here
+        set_layout.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_H))
+        self.optionsMenu.addAction(set_layout)
+
+    def layoutSave(self):
+        #checks if config exists, if yes saves the splitters sizes, if no, creates a file and writes them
+        if os.path.exists('./config.json'):
+            f = open('config.json')
+            data = json.load(f)
+            f.close()
+            #TODO check if that part works when theese keys do not exist in json
+            data["splitter|"] = self.splitter1.sizes()
+            data["splitter-"] = self.splitter3.sizes()
+            data = json.dumps(data, indent = 4)
+            with open("config.json", "w") as outfile:
+                outfile.write(data)
+        else:
+            data = {"splitter|": self.splitter1.sizes(), "splitter-": self.splitter3.sizes()}
+            data = json.dumps(data, indent = 4)
+            with open("config.json", "w") as outfile:
+                outfile.write(data)
+
+    def layoutSet(self):
+        #checks if config exists, if yes sets splitters sizes, if no does nothing
+        if os.path.exists('./config.json'):
+            f = open('config.json')
+            data = json.load(f)
+            f.close()
+            #TODO Error handling if file exists but the keys don't
+            self.splitter1.setSizes(data['splitter|'])
+            self.splitter2.setSizes(data['splitter|'])
+            self.splitter3.setSizes(data['splitter-'])
+        else:
+            return 0
 
     def examplaryUI(self):
+        #TODO has to be later rewriten to contain parts created by others
         mainwindow = QWidget()
 
         vbox = QVBoxLayout()
@@ -44,25 +78,25 @@ class Window(QMainWindow):
         fileList = QTextEdit()
         workSpace = QTextEdit()
 
-        splitter1 = QSplitter(Qt.Horizontal)
-        splitter2 = QSplitter(Qt.Horizontal)
-        splitter3 = QSplitter(Qt.Vertical)
+        self.splitter1 = QSplitter(Qt.Horizontal)
+        self.splitter2 = QSplitter(Qt.Horizontal)
+        self.splitter3 = QSplitter(Qt.Vertical)
 
-        splitter1.addWidget(actionMenu)
-        splitter1.addWidget(loadedImages)
-        splitter1.setSizes([100,200])
+        self.splitter1.addWidget(actionMenu)
+        self.splitter1.addWidget(loadedImages)
+        self.splitter1.setSizes([100,200])
 
-        splitter2.addWidget(fileList)
-        splitter2.addWidget(workSpace)
-        splitter2.setSizes([100,200])
+        self.splitter2.addWidget(fileList)
+        self.splitter2.addWidget(workSpace)
+        self.splitter2.setSizes([100,200])
         
-        splitter3.addWidget(splitter1)
-        splitter3.addWidget(splitter2)
-        splitter3.setSizes([100,200])
+        self.splitter3.addWidget(self.splitter1)
+        self.splitter3.addWidget(self.splitter2)
+        self.splitter3.setSizes([100,200])
 
-        splitter1.splitterMoved.connect(lambda: splitter2.setSizes(splitter1.sizes()))
-        splitter2.splitterMoved.connect(lambda: splitter1.setSizes(splitter2.sizes()))
-        vbox.addWidget(splitter3)
+        self.splitter1.splitterMoved.connect(lambda: self.splitter2.setSizes(self.splitter1.sizes()))
+        self.splitter2.splitterMoved.connect(lambda: self.splitter1.setSizes(self.splitter2.sizes()))
+        vbox.addWidget(self.splitter3)
 
         mainwindow.setLayout(vbox)
 

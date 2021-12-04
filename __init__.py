@@ -4,3 +4,5 @@ from PyQt5.QtWidgets import QFrame, QTextEdit
 from PyQt5.QtGui import QPixmap, QKeySequence
 from PyQt5.QtCore import Qt, QEvent
 import sys
+import os
+import json

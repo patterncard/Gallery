@@ -1,23 +1,76 @@
 from __init__ import *
 
-class Tree(QWidget):
-    def __init__(self, dir = os.getcwd()):
+class CheckableFileSystemModel(QFileSystemModel):
+    checkStateChanged = pyqtSignal(str, bool)
+    def __init__(self, dir):
         super().__init__()
-        appWidth = 800
-        appHeight = 300
+        #list of checkstates
+        self.checkStates = {}
+        self.setNameFilterDisables(False)
 
-        self.setWindowTitle('Test window')
-        self.setGeometry(300,300,appWidth,appHeight)
+        #Functions used in the checking procedure
+        self.rowsInserted.connect(self.AddCheckMark)
+        self.rowsRemoved.connect(self.RemoveCheckMark)
+        self.rowsAboutToBeRemoved.connect(self.RemoveCheckMark)
 
-        self.model = QFileSystemModel()
-        self.model.setRootPath(dir)
+    #Returns the state of the index
+    def checkState(self, index):
+        return self.checkStates.get(self.filePath(index), Qt.Unchecked)
 
+    #Sets the state of the checkbox, while making sure it is not overwritten an equal state and emits the change if needed
+    def AddCheckMark(self, index, state, emitStateChange=True):
+        path = self.filePath(index)
+        if self.checkStates.get(path) == state:
+            return
+        self.checkStates[path] = state
+        if emitStateChange:
+            self.checkStateChanged.emit(path, bool(state))
+
+    #Removing a checkmark from the file
+    def RemoveCheckMark(self, index):
+        if not index.isValid():
+            return
+        path = self.filePath(index)
+        if path in self.checkStates:
+            self.checkStates.pop(path)
+
+    def flags(self, index):
+            return super().flags(index) | Qt.ItemIsUserCheckable
+
+    def data(self, index, role=Qt.DisplayRole):
+        self.fetchMore(index)
+        if role == Qt.CheckStateRole and index.column() == 0 and self.rowCount(index) == 0 and self.isDir(index) == False:
+            return self.checkState(index)
+        return super().data(index, role)
+
+    #Setting the data of chosen index with a given value
+    def setData(self, index, value, role, emitStateChange=True):
+        if role == Qt.CheckStateRole and index.column() == 0:
+            self.AddCheckMark(index, value, emitStateChange)
+            self.dataChanged.emit(index, index)
+            return True
+        return super().setData(index, value, role)
+
+class Tree(QWidget):
+    def __init__(self, dir = r'C:\Users\User\Desktop'):
+        super(Tree, self).__init__()
         self.tree = QTreeView()
+        self.printTree(dir)
+
+    def printTree(self, dir):
+        self.tree = QTreeView()
+        self.tree.clicked.connect(self.onClicked)
+        self.model = CheckableFileSystemModel(dir)
+        self.model.setReadOnly(True)
         self.tree.setModel(self.model)
-        self.tree.setRootIndex(self.model.index(dir))
-        self.tree.setColumnWidth(0, 250)
+        self.tree.setColumnWidth(0, 200)
+        self.tree.setRootIndex(self.model.index(dir)) #!!!!!!!!!!!!!!
+
+        self.tree.setSortingEnabled(True)
         self.tree.setAlternatingRowColors(True)
 
-        layout = QVBoxLayout()
+        self.model.setNameFilters(["*.jpg", "*.png", "*.jpeg"])
+
+        layout = QVBoxLayout(self)
         layout.addWidget(self.tree)
         self.setLayout(layout)

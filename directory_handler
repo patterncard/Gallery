@@ -5,6 +5,7 @@ class CheckableFileSystemModel(QFileSystemModel):
     def __init__(self):
         super().__init__()
         #list of checkstates
+        self.checklist = []
         self.checkStates = {}
         self.setNameFilterDisables(False)
 
@@ -22,6 +23,7 @@ class CheckableFileSystemModel(QFileSystemModel):
         path = self.filePath(index)
         if self.checkStates.get(path) == state:
             return
+        self.checklist.append(self.filePath(index))
         self.checkStates[path] = state
         if emitStateChange:
             self.checkStateChanged.emit(path, bool(state))
@@ -33,6 +35,9 @@ class CheckableFileSystemModel(QFileSystemModel):
         path = self.filePath(index)
         if path in self.checkStates:
             self.checkStates.pop(path)
+            for i in self.checklist:
+                if self.checklist[i] == path:
+                    self.checklist[i].pop()
 
     def flags(self, index):
             return super().flags(index) | Qt.ItemIsUserCheckable
@@ -52,11 +57,11 @@ class CheckableFileSystemModel(QFileSystemModel):
 
 class Tree(QWidget):
     def __init__(self):
-        super().__init__()
+        super(Tree, self).__init__()
         self.layout = QVBoxLayout(self)
 
         self.tree = QTreeView()
-        self.layout.addWidget(self.tree, stretch=2)
+        self.layout.addWidget(self.tree)
 
 
         self.model = CheckableFileSystemModel()
@@ -64,9 +69,27 @@ class Tree(QWidget):
         self.model.setNameFilters(["*.jpg", "*.png", "*.jpeg"])
         self.tree.setModel(self.model)
         self.tree.setSortingEnabled(True)
-        self.tree.header().setSectionResizeMode(QHeaderView.Stretch)
+        self.tree.header().setSectionResizeMode(QHeaderView.ResizeToContents)
+        self.tree.setItemsExpandable(False)
+        self.tree.setContextMenuPolicy(Qt.ActionsContextMenu)
+        returnToParentDir = QAction("Go Back", self)
+        returnToParentDir.triggered.connect(lambda: self.returnToParent())
+        self.tree.addAction(returnToParentDir)
 
-    def onClicked(self):
-        print("clicked")
+        chooseDir = QAction("Set as root", self)
+        chooseDir.triggered.connect(lambda: self.choose_dir(self.tree.currentIndex()))
+        self.tree.addAction(chooseDir)
+
+        self.tree.doubleClicked.connect(self.doubleClickAction)
+
+
+    def doubleClickAction(self):
+        self.tree.setRootIndex(self.tree.currentIndex())
+
+    def returnToParent(self):
+        self.tree.setRootIndex(self.tree.rootIndex().parent())
+
+    def choose_dir(self, index):
+        self.tree.setRootIndex(index)
 
 

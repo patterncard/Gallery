@@ -1,4 +1,5 @@
 from __init__ import *
+from directory_handler import Tree
 
 class Window(QMainWindow):
 
@@ -75,7 +76,7 @@ class Window(QMainWindow):
 
         actionMenu = QTextEdit()
         loadedImages = QTextEdit()
-        fileList = QTextEdit()
+        fileList = Tree()
         workSpace = QTextEdit()
 
         self.splitter1 = QSplitter(Qt.Horizontal)

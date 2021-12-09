@@ -75,6 +75,7 @@ class Window(QMainWindow):
 
         actionMenu = QTextEdit()
         loadedImages = QTextEdit()
+        # substitute Tree in main
         fileList = QTextEdit()
         workSpace = QTextEdit()
 

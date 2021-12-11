@@ -1,5 +1,6 @@
 from __init__ import *
 from directory_handler import Tree
+from test import *
 
 class Window(QMainWindow):
 
@@ -74,25 +75,25 @@ class Window(QMainWindow):
 
         vbox = QVBoxLayout()
 
-        actionMenu = QTextEdit()
-        loadedImages = QTextEdit()
+        actionMenu = Test()
+        loadedImages = Test()
         fileList = Tree()
-        workSpace = QTextEdit()
+        workSpace = Test()
 
         self.splitter1 = QSplitter(Qt.Horizontal)
         self.splitter2 = QSplitter(Qt.Horizontal)
         self.splitter3 = QSplitter(Qt.Vertical)
 
-        self.splitter1.addWidget(actionMenu)
-        self.splitter1.addWidget(loadedImages)
+        self.splitter1.insertWidget(1, actionMenu)
+        self.splitter1.insertWidget(2, loadedImages)
         self.splitter1.setSizes([100,200])
 
-        self.splitter2.addWidget(fileList)
-        self.splitter2.addWidget(workSpace)
+        self.splitter2.insertWidget(1, fileList)
+        self.splitter2.insertWidget(2, workSpace)
         self.splitter2.setSizes([100,200])
         
-        self.splitter3.addWidget(self.splitter1)
-        self.splitter3.addWidget(self.splitter2)
+        self.splitter3.insertWidget(1, self.splitter1)
+        self.splitter3.insertWidget(2, self.splitter2)
         self.splitter3.setSizes([100,200])
 
         self.splitter1.splitterMoved.connect(lambda: self.splitter2.setSizes(self.splitter1.sizes()))

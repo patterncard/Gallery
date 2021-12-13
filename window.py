@@ -43,7 +43,6 @@ class Window(QMainWindow):
             f = open('config.json')
             data = json.load(f)
             f.close()
-            #TODO check if that part works when theese keys do not exist in json
             data["splitter|"] = self.splitter1.sizes()
             data["splitter-"] = self.splitter3.sizes()
             data = json.dumps(data, indent = 4)
@@ -61,10 +60,12 @@ class Window(QMainWindow):
             f = open('config.json')
             data = json.load(f)
             f.close()
-            #TODO Error handling if file exists but the keys don't
-            self.splitter1.setSizes(data['splitter|'])
-            self.splitter2.setSizes(data['splitter|'])
-            self.splitter3.setSizes(data['splitter-'])
+            try:
+                self.splitter1.setSizes(data['splitter|'])
+                self.splitter2.setSizes(data['splitter|'])
+                self.splitter3.setSizes(data['splitter-'])
+            except KeyError:
+                return 0
         else:
             return 0
 

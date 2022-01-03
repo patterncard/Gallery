@@ -6,3 +6,4 @@ class Test(QWidget):
         self.layout = QVBoxLayout(self)
         self.field = QTextEdit()
         self.layout.addWidget(self.field)
+        self.layout.setContentsMargins(0, 0, 0, 0)

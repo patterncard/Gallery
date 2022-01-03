@@ -11,13 +11,13 @@ class ViewCellClass(qtw.QWidget):
         super().__init__(*args, **kwargs)
 
         #Seting window to be placed at 0,0 and have size 640x480
-        self.setGeometry(0, 0, 640, 480)
+        #self.setGeometry(0, 0, 640, 480)
         
         #Seting PIL image
         self.pil_image = None
 
         #Seting window name
-        self.setWindowTitle('ViewCellClass')
+        #self.setWindowTitle('ViewCellClass')
         
         #Seting initial image projection
         self.reset_transform()
@@ -30,6 +30,7 @@ class ViewCellClass(qtw.QWidget):
         self.hbox = qtw.QHBoxLayout()
         self.hbox.addWidget(self.canvas)
         self.setLayout(self.hbox)
+        self.hbox.setContentsMargins(0, 0, 0, 0)
 
         #Setting event handeling methods for canvas
         self.canvas.wheelEvent = self.handle_wheel_event 
@@ -42,7 +43,7 @@ class ViewCellClass(qtw.QWidget):
         
         #Setting image to be projected in canvas, for debugging, in releas
         #version call it from outside code.
-        self.set_image('image (7).jpg')
+        self.set_image('cpplogo.png')
         
     def handle_wheel_event(self, event):
         '''Scales oryginal image[pil_image] on wheelEvent'''
@@ -184,4 +185,3 @@ if __name__ == '__main__':
     app = qtw.QApplication(sys.argv)
     w = ViewCellClass()
     sys.exit(app.exec_())
-

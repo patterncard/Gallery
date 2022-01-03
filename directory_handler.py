@@ -85,6 +85,7 @@ class Tree(QWidget):
 
         self.tree = DeselectableTreeView()
         self.layout.addWidget(self.tree)
+        self.layout.setContentsMargins(0, 0, 0, 0)
 
 
         self.model = CheckableFileSystemModel()

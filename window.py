@@ -1,6 +1,7 @@
 from __init__ import *
 from directory_handler import Tree
 from test import *
+from ViewCellClass import ViewCellClass
 
 class Window(QMainWindow):
 
@@ -79,7 +80,7 @@ class Window(QMainWindow):
         actionMenu = Test()
         loadedImages = Test()
         fileList = Tree()
-        workSpace = Test()
+        workSpace = ViewCellClass()
 
         self.splitter1 = QSplitter(Qt.Horizontal)
         self.splitter2 = QSplitter(Qt.Horizontal)

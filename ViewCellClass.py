@@ -6,12 +6,15 @@ from PIL import *
 from PIL.ImageQt import *
 import numpy as np
 
-class ViewCellClass(qtw.QWidget):
+class ViewCellClass(qtw.QFrame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         #Seting window to be placed at 0,0 and have size 640x480
         #self.setGeometry(0, 0, 640, 480)
+        self.resize(self.sizeHint())
+        self.setFrameStyle(qtw.QFrame.Panel | qtw.QFrame.Plain)
+
         
         #Seting PIL image
         self.pil_image = None
@@ -173,6 +176,7 @@ class ViewCellClass(qtw.QWidget):
         im = ImageQt(dst)
         self.canvas.setPixmap(qtg.QPixmap().fromImage(im))
         self.image = im
+        self.resize(canvas_width, canvas_height)
 
     def redraw_image(self):
         '''Redraws image on canvas [QLabel]''' 

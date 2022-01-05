@@ -78,27 +78,24 @@ class Window(QMainWindow):
 
         vbox = QVBoxLayout()
 
-        actionMenu = Buttons()
-        #actionMenu.setFixedSize(300,200)
-        loadedImages = Test()
-        fileList = Tree()
-        workSpace = ViewCellClass()
+        self.actionMenu = Buttons()
+        self.actionMenu.clickedSignal.connect(self.test)
+        self.loadedImages = Test()
+        self.fileList = Tree()
+        self.workSpace = ViewCellClass()
 
         self.splitter1 = QSplitter(Qt.Horizontal)
         self.splitter2 = QSplitter(Qt.Horizontal)
         self.splitter3 = QSplitter(Qt.Vertical)
 
-        self.splitter1.insertWidget(1, actionMenu)
-        self.splitter1.insertWidget(2, loadedImages)
-        self.splitter1.setSizes([100,200])
+        self.splitter1.insertWidget(1, self.actionMenu)
+        self.splitter1.insertWidget(2, self.loadedImages)
 
-        self.splitter2.insertWidget(1, fileList)
-        self.splitter2.insertWidget(2, workSpace)
-        self.splitter2.setSizes([100,200])
+        self.splitter2.insertWidget(1, self.fileList)
+        self.splitter2.insertWidget(2, self.workSpace)
         
         self.splitter3.insertWidget(1, self.splitter1)
         self.splitter3.insertWidget(2, self.splitter2)
-        self.splitter3.setSizes([100,200])
 
         self.splitter1.splitterMoved.connect(lambda: self.splitter2.setSizes(self.splitter1.sizes()))
         self.splitter2.splitterMoved.connect(lambda: self.splitter1.setSizes(self.splitter2.sizes()))
@@ -106,5 +103,15 @@ class Window(QMainWindow):
 
         mainwindow.setLayout(vbox)
 
+        self.setSplitters()
+
         self.setCentralWidget(mainwindow)
     
+    def setSplitters(self):
+        if self.layoutSet() == 0:
+            self.splitter1.setSizes([100,200])
+            self.splitter2.setSizes([100,200])
+            self.splitter3.setSizes([100,200])
+
+    def test(self, value1, value2):
+        self.loadedImages.receiveSignal.emit(value1,value2)

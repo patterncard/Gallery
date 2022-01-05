@@ -2,6 +2,7 @@ from __init__ import *
 from directory_handler import Tree
 from test import *
 from ViewCellClass import ViewCellClass
+from button_field import Buttons
 
 class Window(QMainWindow):
 
@@ -77,7 +78,8 @@ class Window(QMainWindow):
 
         vbox = QVBoxLayout()
 
-        actionMenu = Test()
+        actionMenu = Buttons()
+        #actionMenu.setFixedSize(300,200)
         loadedImages = Test()
         fileList = Tree()
         workSpace = ViewCellClass()

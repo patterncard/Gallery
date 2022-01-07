@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QPushButton
 from __init__ import *
 
 class Buttons(QWidget):
-    clickedSignal = pyqtSignal([int, int])
+    # clickedSignal = pyqtSignal([int, int])
 
     def __init__(self):
         super(Buttons, self).__init__()
@@ -24,14 +24,14 @@ class Buttons(QWidget):
     def upperRow(self):
         hlayout = QHBoxLayout()
         self.x11 = QPushButton("1x1")
-        self.x11.pressed.connect(lambda: self.clickedSignal.emit(1,1))
+        # self.x11.pressed.connect(lambda: self.clickedSignal.emit(1,1))
         self.x11.setFixedSize(50,50)
         self.x12 = QPushButton("1x2")
-        self.x12.pressed.connect(lambda: self.clickedSignal.emit(1,2))
+        # self.x12.pressed.connect(lambda: self.clickedSignal.emit(1,2))
         self.x12.setFixedSize(50,50)
         self.x13 = QPushButton("1x3")
         self.x13.setFixedSize(50,50)
-        self.x13.pressed.connect(lambda: self.clickedSignal.emit(1,3))
+        # self.x13.pressed.connect(lambda: self.clickedSignal.emit(1,3))
         hlayout.setAlignment(Qt.AlignCenter)
         hlayout.addStretch()
         hlayout.addWidget(self.x11)

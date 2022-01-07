@@ -1,4 +1,3 @@
-from PyQt5.QtWidgets import QPushButton, QSlider
 from __init__ import *
 
 
@@ -9,9 +8,11 @@ class AdjustImage(QWidget):
     clear_signal = pyqtSignal([bool])
 
     def __init__(self):
-        super(AdjustImage, self).__init__()
+        super().__init__()
         hbox = QHBoxLayout()
 
+        self.setWindowTitle("Brightness")
+        self.resize(400,200)
         self.slider = QSlider(Qt.Horizontal, self)
         self.slider.setMinimum(0)
         self.slider.setMaximum(20)
@@ -20,12 +21,12 @@ class AdjustImage(QWidget):
         self.slider.setTickInterval(1)
         self.slider.setMaximumWidth(400)
         self.slider.setMinimumHeight(60)
-        self.slider.move(0, 50)
+        #self.slider.move(0, 50)
 
         self.slider.valueChanged.connect(self.updateExposureValue)
 
         self.name = QLabel('Exposure', self.slider)
-        self.name.move(170, 0)
+        #self.name.move(170, 0)
 
         self.label = QLabel('1.0', self)
         self.label.setMinimumWidth(20)
@@ -33,16 +34,22 @@ class AdjustImage(QWidget):
         hbox.addWidget(self.slider)
         hbox.addWidget(self.label)
 
+        vbox = QVBoxLayout()
+
+        self.button1 = QPushButton('Apply', self)
+        self.button1.pressed.connect(lambda: self.apply_signal.emit(True))
+        #self.button1.move(115, 200)
+        vbox.addWidget(self.button1)
+        self.button2 = QPushButton('Clear', self)
+        self.button2.pressed.connect(lambda: self.clear_signal.emit(True))
+        self.button2.pressed.connect(self.resetSlider)
+        #self.button2.move(215, 200)
+        vbox.addWidget(self.button2)
+
+        hbox.addLayout(vbox)
+
         self.setLayout(hbox)
-
-        self.button = QPushButton('Apply', self)
-        self.button.pressed.connect(lambda: self.apply_signal.emit(True))
-        self.button.move(115, 200)
-
-        self.button = QPushButton('Clear', self)
-        self.button.pressed.connect(lambda: self.clear_signal.emit(True))
-        self.button.pressed.connect(self.resetSlider)
-        self.button.move(215, 200)
+        self.show()
 
     def updateExposureValue(self, value):
         exposure_value = value/10

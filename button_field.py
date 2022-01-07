@@ -1,8 +1,6 @@
-from PyQt5.QtWidgets import QPushButton
 from __init__ import *
 
 class Buttons(QWidget):
-    # clickedSignal = pyqtSignal([int, int])
 
     def __init__(self):
         super(Buttons, self).__init__()
@@ -25,14 +23,14 @@ class Buttons(QWidget):
         hlayout = QHBoxLayout()
         # buttons don't do antyhing for now, 
         self.x11 = QPushButton("1x1")
-        # self.x11.pressed.connect(lambda: self.clickedSignal.emit(1,1))
+        self.x11.pressed.connect(self.dialog)
         self.x11.setFixedSize(50,50)
         self.x12 = QPushButton("1x2")
-        # self.x12.pressed.connect(lambda: self.clickedSignal.emit(1,2))
+        self.x12.pressed.connect(self.dialog)
         self.x12.setFixedSize(50,50)
         self.x13 = QPushButton("1x3")
         self.x13.setFixedSize(50,50)
-        # self.x13.pressed.connect(lambda: self.clickedSignal.emit(1,3))
+        self.x13.pressed.connect(self.dialog)
         hlayout.setAlignment(Qt.AlignCenter)
         hlayout.addStretch()
         hlayout.addWidget(self.x11)
@@ -47,10 +45,13 @@ class Buttons(QWidget):
         hlayout = QHBoxLayout()
         self.x22 = QPushButton("2x2")
         self.x22.setFixedSize(50,50)
+        self.x22.pressed.connect(self.dialog)
         self.x23 = QPushButton("2x3")
         self.x23.setFixedSize(50,50)
+        self.x23.pressed.connect(self.dialog)
         self.x33 = QPushButton("3x3")
         self.x33.setFixedSize(50,50)
+        self.x33.pressed.connect(self.dialog)
         hlayout.setAlignment(Qt.AlignCenter)
         hlayout.addStretch()
         hlayout.addWidget(self.x22)
@@ -60,3 +61,20 @@ class Buttons(QWidget):
         hlayout.addWidget(self.x33)
         hlayout.addStretch()
         return hlayout
+
+    def dialog(self):
+        dlg = QDialog()
+        QBtn = QDialogButtonBox.Ok
+
+        dlg.setWindowTitle("Error")
+        buttonBox = QDialogButtonBox(QBtn)
+        buttonBox.setCenterButtons(True)
+        buttonBox.accepted.connect(dlg.accept)
+
+        layout = QVBoxLayout()
+        msg = QLabel("This feature is not yet implemented")
+        msg.setAlignment(Qt.AlignCenter)
+        layout.addWidget(msg)
+        layout.addWidget(buttonBox)
+        dlg.setLayout(layout)
+        dlg.exec()

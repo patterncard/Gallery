@@ -1,19 +1,17 @@
-import sys
+from __init__ import *
 from PIL import Image
-from PyQt5 import QtWidgets as qtw
-from PyQt5 import QtCore as qtc
-from PyQt5 import QtGui as qtg
 from PIL import *
 from PIL.ImageQt import *
 from PIL import ImageEnhance
 import numpy as np
 import cv2
+from adjust_photo import AdjustImage
 
 
-class ViewCellClass(qtw.QFrame):
-    received_exposure = qtc.pyqtSignal([float])
-    recived_apply = qtc.pyqtSignal([bool])
-    recived_clear = qtc.pyqtSignal([bool])
+class ViewCellClass(QFrame):
+    received_exposure = pyqtSignal([float])
+    recived_apply = pyqtSignal([bool])
+    recived_clear = pyqtSignal([bool])
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -21,8 +19,19 @@ class ViewCellClass(qtw.QFrame):
         # Seting window to be placed at 0,0 and have size 640x480
         #self.setGeometry(0, 0, 640, 480)
         self.resize(self.sizeHint())
-        self.setFrameStyle(qtw.QFrame.Panel | qtw.QFrame.Plain)
+        self.setFrameStyle(QFrame.Panel | QFrame.Plain)
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.on_context_menu)
 
+        self.popMenu = QMenu()
+        action = QAction('save', self)
+        #action.triggered.connect(self)
+        self.popMenu.addAction(action)
+        self.popMenu.addSeparator()
+        action = QAction('brightness', self)
+        action.triggered.connect(self.brightness)
+        self.popMenu.addAction(action)
+        
         # Seting PIL image
         self.raw_image = None
         self.original_image = None
@@ -36,10 +45,10 @@ class ViewCellClass(qtw.QFrame):
 
         # Creating canvas [QLabel] showing image, possibly also for
         # drawing selection.
-        self.canvas = qtw.QLabel()  # SET TO QLabel or QImageLabel
+        self.canvas = QLabel()  # SET TO QLabel or QImageLabel
 
         # Setting QWidget layout manager
-        self.hbox = qtw.QHBoxLayout()
+        self.hbox = QHBoxLayout()
 
         self.received_exposure.connect(self.adjustExposure)
         self.recived_apply.connect(self.applyChanges)
@@ -76,7 +85,7 @@ class ViewCellClass(qtw.QFrame):
         '''
         When lmb pressed, initializes process of image moving, by setting image_move_flag and saving initial mouse coordinates.
         '''
-        if event.buttons() & qtc.Qt.LeftButton:
+        if event.buttons() & Qt.LeftButton:
             self.image_move_flag = True
             self.image_move_x = event.x()
             self.image_move_y = event.y()
@@ -85,7 +94,7 @@ class ViewCellClass(qtw.QFrame):
         '''
         When lmb pressed and mouse moves, "moves" image in given direction, by applying translation.
         '''
-        if event.buttons() & qtc.Qt.LeftButton:
+        if event.buttons() & Qt.LeftButton:
             self.translate(event.x() - self.image_move_x,
                            event.y() - self.image_move_y)
             self.image_move_x = event.x()
@@ -188,7 +197,7 @@ class ViewCellClass(qtw.QFrame):
                               )
 
         im = ImageQt(dst)
-        self.canvas.setPixmap(qtg.QPixmap().fromImage(im))
+        self.canvas.setPixmap(QPixmap().fromImage(im))
         self.image = im
         self.resize(canvas_width, canvas_height)
 
@@ -211,9 +220,18 @@ class ViewCellClass(qtw.QFrame):
         self.original_image = self.raw_image
         self.redraw_image()
 
+    def on_context_menu(self, point):
+        self.popMenu.exec_(self.mapToGlobal(point))
+    
+    def brightness(self):
+        self.nextWindow = AdjustImage()
+        self.nextWindow.exposure_signal.connect(self.adjustExposure)
+        self.nextWindow.apply_signal.connect(self.applyChanges)
+        self.nextWindow.clear_signal.connect(self.clearChanges)
+
 
 # For debugging, in releas version call it from outside code.
 if __name__ == '__main__':
-    app = qtw.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     w = ViewCellClass()
     sys.exit(app.exec_())

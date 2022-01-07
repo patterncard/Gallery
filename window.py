@@ -1,10 +1,8 @@
 from __init__ import *
-from adjust_photo import AdjustImage
 from directory_handler import Tree
-from test import *
+from test import Test
 from ViewCellClass import ViewCellClass
 from button_field import Buttons
-
 
 class Window(QMainWindow):
 
@@ -83,19 +81,16 @@ class Window(QMainWindow):
 
         self.actionMenu = Buttons()
         # self.actionMenu.clickedSignal.connect(self.test)
-        self.adjustmentPanel = AdjustImage()
+        self.previevSlider = Test()
         self.fileList = Tree()
         self.workSpace = ViewCellClass()
-        self.adjustmentPanel.exposure_signal.connect(self.forwardExposure)
-        self.adjustmentPanel.apply_signal.connect(self.forwardApply)
-        self.adjustmentPanel.clear_signal.connect(self.forwardClear)
 
         self.splitter1 = QSplitter(Qt.Horizontal)
         self.splitter2 = QSplitter(Qt.Horizontal)
         self.splitter3 = QSplitter(Qt.Vertical)
 
         self.splitter1.insertWidget(1, self.actionMenu)
-        self.splitter1.insertWidget(2, self.adjustmentPanel)
+        self.splitter1.insertWidget(2, self.previevSlider)
 
         self.splitter2.insertWidget(1, self.fileList)
         self.splitter2.insertWidget(2, self.workSpace)
@@ -120,12 +115,3 @@ class Window(QMainWindow):
             self.splitter1.setSizes([100, 200])
             self.splitter2.setSizes([100, 200])
             self.splitter3.setSizes([100, 200])
-
-    def forwardExposure(self, exposure):
-        self.workSpace.received_exposure.emit(exposure)
-
-    def forwardApply(self, apply):
-        self.workSpace.recived_apply.emit(apply)
-
-    def forwardClear(self, clear):
-        self.workSpace.recived_clear.emit(clear)

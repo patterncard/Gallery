@@ -23,6 +23,7 @@ class Buttons(QWidget):
 
     def upperRow(self):
         hlayout = QHBoxLayout()
+        # buttons don't do antyhing for now, 
         self.x11 = QPushButton("1x1")
         # self.x11.pressed.connect(lambda: self.clickedSignal.emit(1,1))
         self.x11.setFixedSize(50,50)

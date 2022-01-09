@@ -74,15 +74,15 @@ class Window(QMainWindow):
             return 0
 
     def examplaryUI(self):
-        # TODO has to be later rewriten to contain parts created by others
+        # TODO has to be later rewritten to contain parts created by others
         mainwindow = QWidget()
 
         vbox = QVBoxLayout()
 
         self.actionMenu = Buttons()
-        # self.actionMenu.clickedSignal.connect(self.test)
         self.previevSlider = Test()
         self.fileList = Tree()
+        self.fileList.model.send_Dir.connect(self.choose_image)
         self.workSpace = ViewCellClass()
 
         self.splitter1 = QSplitter(Qt.Horizontal)
@@ -115,3 +115,6 @@ class Window(QMainWindow):
             self.splitter1.setSizes([100, 200])
             self.splitter2.setSizes([100, 200])
             self.splitter3.setSizes([100, 200])
+
+    def choose_image(self, path, state):
+        self.previevSlider.receiveSignal.emit(path, state)

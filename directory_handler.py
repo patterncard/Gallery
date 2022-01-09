@@ -1,7 +1,10 @@
 from __init__ import *
 
 class CheckableFileSystemModel(QFileSystemModel):
+    #Needed inside the class
     checkStateChanged = pyqtSignal(str, bool)
+    #needed outside the class
+    send_Dir = pyqtSignal([str, int])
     def __init__(self):
         super().__init__()
         #list of checkstates
@@ -30,10 +33,12 @@ class CheckableFileSystemModel(QFileSystemModel):
                 print(self.checklist)
                 if emitStateChange:
                     self.checkStateChanged.emit(path, bool(state))
+                    self.send_Dir.emit(path, state)
         else:
             self.checkStates[path] = state
             if emitStateChange:
                 self.checkStateChanged.emit(path, bool(state))
+
 
 
 
@@ -46,6 +51,7 @@ class CheckableFileSystemModel(QFileSystemModel):
         if path in self.checkStates:
             self.checkStates.pop(path)
             self.checklist.pop(path)
+            self.send_Dir.emit(path, 0)
 
         print(self.checklist)
 
@@ -122,4 +128,3 @@ class Tree(QWidget):
             self.tree.setRootIndex(index)
             self.final_root_path = self.model.filePath(index)
             print(self.final_root_path)
-

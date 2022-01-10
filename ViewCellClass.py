@@ -12,6 +12,8 @@ class ViewCellClass(QFrame):
     received_exposure = pyqtSignal([float])
     recived_apply = pyqtSignal([bool])
     recived_clear = pyqtSignal([bool])
+    imgchange = pyqtSignal(str)
+    path = ""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -22,10 +24,11 @@ class ViewCellClass(QFrame):
         self.setFrameStyle(QFrame.Panel | QFrame.Plain)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.on_context_menu)
+        self.imgchange.connect(self.set_image)
 
         self.popMenu = QMenu()
         action = QAction('save', self)
-        #action.triggered.connect(self)
+        action.triggered.connect(self.save)
         self.popMenu.addAction(action)
         self.popMenu.addSeparator()
         action = QAction('brightness', self)
@@ -69,7 +72,7 @@ class ViewCellClass(QFrame):
 
         # Setting image to be projected in canvas, for debugging, in releas
         # version call it from outside code.
-        self.set_image('cpplogo.png')
+        #self.set_image("empty_slot.png")
 
     def handle_wheel_event(self, event):
         '''Scales oryginal image[pil_image] on wheelEvent'''
@@ -107,7 +110,7 @@ class ViewCellClass(QFrame):
 
     def set_image(self, filename):
         '''Loads image locatet at filename'''
-
+        self.path = filename
         # Checking if filename is not empty
         if not filename:
             return
@@ -229,6 +232,9 @@ class ViewCellClass(QFrame):
         self.nextWindow.apply_signal.connect(self.applyChanges)
         self.nextWindow.clear_signal.connect(self.clearChanges)
 
+    def save(self):
+        fileName, selectedFilter = QFileDialog.getSaveFileName(self, "Save as", self.path, "images (*.jpg *.jpeg *.png);;All Files (*.*)")
+        self.original_image.save(fileName)
 
 # For debugging, in releas version call it from outside code.
 if __name__ == '__main__':

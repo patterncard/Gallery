@@ -1,6 +1,6 @@
 from __init__ import *
 from directory_handler import Tree
-from test import Test
+from gallery import Gallery
 from ViewCellClass import ViewCellClass
 from button_field import Buttons
 
@@ -80,7 +80,11 @@ class Window(QMainWindow):
         vbox = QVBoxLayout()
 
         self.actionMenu = Buttons()
-        self.previevSlider = Test()
+        self.previevSlider = QScrollArea()
+        self.gallery = Gallery()
+        self.gallery.sendSignal.connect(self.imageToEdit)
+        self.previevSlider.setWidget(self.gallery)
+        self.previevSlider.setAlignment(Qt.AlignCenter)
         self.fileList = Tree()
         self.fileList.model.send_Dir.connect(self.choose_image)
         self.workSpace = ViewCellClass()
@@ -117,4 +121,7 @@ class Window(QMainWindow):
             self.splitter3.setSizes([100, 200])
 
     def choose_image(self, path, state):
-        self.previevSlider.receiveSignal.emit(path, state)
+        self.gallery.receiveSignal.emit(path, state)
+
+    def imageToEdit(self, path):
+        self.workSpace.imgchange.emit(path)

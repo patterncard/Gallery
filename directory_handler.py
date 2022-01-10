@@ -26,11 +26,12 @@ class CheckableFileSystemModel(QFileSystemModel):
         path = self.filePath(index)
         if self.checkStates.get(path) == state:
             return
+        if path == "":
+            return
         if state == 2:
-            if len(self.checklist) <= 5:
+            if len(self.checklist) <= 6:
                 self.checkStates[path] = state
                 self.checklist[path] = 'added'
-                print(self.checklist)
                 if emitStateChange:
                     self.checkStateChanged.emit(path, bool(state))
                     self.send_Dir.emit(path, state)

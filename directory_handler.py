@@ -26,12 +26,11 @@ class CheckableFileSystemModel(QFileSystemModel):
         path = self.filePath(index)
         if self.checkStates.get(path) == state:
             return
-        if path == "":
-            return
         if state == 2:
-            if len(self.checklist) <= 6:
+            if len(self.checklist) <= 5:
                 self.checkStates[path] = state
                 self.checklist[path] = 'added'
+                print(self.checklist)
                 if emitStateChange:
                     self.checkStateChanged.emit(path, bool(state))
                     self.send_Dir.emit(path, state)
@@ -60,7 +59,9 @@ class CheckableFileSystemModel(QFileSystemModel):
             return super().flags(index) | Qt.ItemIsUserCheckable
 
     def data(self, index, role=Qt.DisplayRole):
-        if role == Qt.CheckStateRole and index.column() == 0 and self.isDir(index) == False:
+        info = QFileInfo(self.filePath(index))
+        size = info.size();
+        if role == Qt.CheckStateRole and index.column() == 0 and self.isDir(index) == False and size < 7000000:
             return self.checkState(index)
         return super().data(index, role)
 
